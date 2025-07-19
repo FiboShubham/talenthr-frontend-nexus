@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
+import { ReactNode, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 
@@ -10,13 +10,26 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuthenticated || !user) {
+      navigate('/auth/login', { replace: true });
+      return;
+    }
+
+    if (requiredRole && user.role !== requiredRole && user.role !== 'admin') {
+      navigate('/dashboard', { replace: true });
+      return;
+    }
+  }, [isAuthenticated, user, requiredRole, navigate]);
 
   if (!isAuthenticated || !user) {
-    return <Navigate to="/auth/login" replace />;
+    return null;
   }
 
   if (requiredRole && user.role !== requiredRole && user.role !== 'admin') {
-    return <Navigate to="/dashboard" replace />;
+    return null;
   }
 
   return <>{children}</>;
