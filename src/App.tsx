@@ -74,7 +74,7 @@ function App() {
                     <MainLayout />
                   </ProtectedRoute>
                 }>
-                  <Route index element={<Navigate to="/dashboard" replace />} />
+                  <Route index element={<Dashboard />} />
                   <Route path="dashboard" element={<Dashboard />} />
                   <Route path="employees" element={<EmployeesPage />} />
                   <Route path="employees/:id" element={<EmployeeProfilePage />} />
@@ -86,7 +86,14 @@ function App() {
                 </Route>
 
                 {/* Fallback */}
-                <Route path="*" element={<Navigate to="/auth/login" replace />} />
+                <Route path="*" element={
+                  <div className="flex items-center justify-center min-h-screen">
+                    <div className="text-lg">Redirecting to login...</div>
+                    <script dangerouslySetInnerHTML={{
+                      __html: `setTimeout(() => window.location.href = '/auth/login', 1000)`
+                    }} />
+                  </div>
+                } />
               </Routes>
             </div>
           </BrowserRouter>
